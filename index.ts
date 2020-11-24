@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { MongoSetup } from "./config/mongo";
 
 import { todoRouter } from "./src/routes/todo";
+import { UserRouter } from "./src/routes/user";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 
 // imported routes
 app.use("/test", todoRouter);
+app.use("/user", UserRouter);
 
 MongoSetup(process.env.DB_URL);
 
