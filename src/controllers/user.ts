@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 import { Users } from "../models/user";
 import jwt from "jsonwebtoken";
 import crypto from "crypto-js";
@@ -157,7 +157,7 @@ const user = {
                   status: 200,
                   result: getuser,
                   expiredIn: moment().add(24, "hours").format(),
-                  token: "GeoToken " + token,
+                  token: token,
                 });
               }
             }
