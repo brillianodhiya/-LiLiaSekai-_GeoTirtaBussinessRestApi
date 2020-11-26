@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 const CheckAuth = (req: Request, res: Response, next: Function) => {
   let geoToken = req.headers["authorization"];
 
-  console.log(geoToken, "GEO TOKEN");
+  // console.log(geoToken, "GEO TOKEN");
 
   if (!geoToken) {
     return res.status(401).send({
