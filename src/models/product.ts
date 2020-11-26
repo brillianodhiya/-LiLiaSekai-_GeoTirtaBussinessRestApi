@@ -53,7 +53,7 @@ productSchema.statics.build = (attr: IProducts) => {
   return new Products(attr);
 };
 
-productSchema.virtual("createdBy", {
+productSchema.virtual("createdByDetail", {
   ref: "User",
   localField: "createdBy",
   foreignField: "_id",

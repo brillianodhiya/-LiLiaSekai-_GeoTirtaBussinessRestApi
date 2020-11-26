@@ -38,7 +38,7 @@ const ProductService = {
             }
           : {}
       )
-        .populate("createdBy", ["username", "email"])
+        .populate("createdByDetail", ["username", "email"])
         .skip((page - 1) * size)
         .limit(size);
 
