@@ -39,7 +39,7 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       required: false,
     },
-    createdBy: {
+    _refCreatedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
@@ -53,9 +53,9 @@ productSchema.statics.build = (attr: IProducts) => {
   return new Products(attr);
 };
 
-productSchema.virtual("createdByDetail", {
+productSchema.virtual("createdBy", {
   ref: "User",
-  localField: "createdBy",
+  localField: "_refCreatedBy",
   foreignField: "_id",
 });
 

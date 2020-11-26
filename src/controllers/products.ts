@@ -6,7 +6,7 @@ const ProductService = {
   addProduct: async (req: Request, res: Response) => {
     let data = req.body;
 
-    data.createdBy = mongoose.Types.ObjectId(res.locals.decodeToken._id);
+    data._refCreatedBy = mongoose.Types.ObjectId(res.locals.decodeToken._id);
 
     try {
       const product = Products.build(data);
@@ -38,7 +38,7 @@ const ProductService = {
             }
           : {}
       )
-        .populate("createdByDetail", ["username", "email"])
+        .populate("createdBy", ["username", "email"])
         .skip((page - 1) * size)
         .limit(size);
 
@@ -64,7 +64,9 @@ const ProductService = {
 
     // console.log(res.locals.decodeToken, "DECODE TOKEN");
 
-    data.createdBy = mongoose.Types.ObjectId(res.locals.decodeToken._id);
+    data._refCreatedBy = mongoose.Types.ObjectId(res.locals.decodeToken._id);
+
+    console.log(data, "DATAA");
 
     let id;
 
