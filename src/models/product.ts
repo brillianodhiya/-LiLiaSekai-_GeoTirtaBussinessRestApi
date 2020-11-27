@@ -6,6 +6,7 @@ interface IProducts {
   price: number;
   display: any;
   createdBy: string;
+  is_qty_not_sure: boolean;
 }
 
 interface ProductDoc extends mongoose.Document {
@@ -14,6 +15,7 @@ interface ProductDoc extends mongoose.Document {
   price: number;
   display: any;
   createdBy: string;
+  is_qty_not_sure: boolean;
 }
 
 interface ProductModelInterface extends mongoose.Model<ProductDoc> {
@@ -42,6 +44,10 @@ const productSchema = new mongoose.Schema(
     _refCreatedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+    },
+    is_qty_not_sure: {
+      type: Boolean,
+      required: false,
     },
   },
   {

@@ -5,7 +5,7 @@ import { CheckAuth } from "../middleware/auth";
 const router = express.Router();
 
 router.post("/", CheckAuth, ProductService.addProduct);
-router.get("/", CheckAuth, ProductService.GetProduct);
+router.get("/:page/:size", CheckAuth, ProductService.GetProduct);
 router.put("/:id", CheckAuth, ProductService.UpdateProduct);
 router.delete("/:id", CheckAuth, ProductService.DeleteProduct);
 

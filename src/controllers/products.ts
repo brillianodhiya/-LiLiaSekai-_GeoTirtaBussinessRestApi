@@ -66,7 +66,7 @@ const ProductService = {
 
     data._refCreatedBy = mongoose.Types.ObjectId(res.locals.decodeToken._id);
 
-    console.log(data, "DATAA");
+    // console.log(data, "DATAA");
 
     let id;
 

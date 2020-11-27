@@ -6,6 +6,7 @@ import { MongoSetup } from "./config/mongo";
 import { todoRouter } from "./src/routes/todo";
 import { UserRouter } from "./src/routes/user";
 import { ProductRouter } from "./src/routes/product";
+import { TransaksiRouter } from "./src/routes/transaksi";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.get("/", (req, res) => {
 app.use("/test", todoRouter);
 app.use("/user", UserRouter);
 app.use("/product", ProductRouter);
+app.use("/transaksi", TransaksiRouter);
 
 MongoSetup(process.env.DB_URL);
 
