@@ -7,6 +7,8 @@ interface ITransaksi {
   qty: number;
   total_harga: number;
   status: string;
+  atas_nama: string;
+  discount: any;
 }
 
 interface TransaksiDoc extends mongoose.Document {
@@ -15,6 +17,8 @@ interface TransaksiDoc extends mongoose.Document {
   qty: number;
   total_harga: number;
   status: string;
+  atas_nama: any;
+  discount: any;
 }
 
 interface TransaksiModelInterface extends mongoose.Model<TransaksiDoc> {
@@ -36,11 +40,15 @@ const transaksiSchema = new mongoose.Schema(
     },
     _ref_product: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
+      ref: "Products",
     },
     qty: {
       type: Number,
       required: true,
+    },
+    discount: {
+      type: Number,
+      required: false,
     },
     total_harga: {
       type: Number,
@@ -48,7 +56,11 @@ const transaksiSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Batal", "Sukses"],
+      enum: ["Batal", "Sukses", "Bon"],
+    },
+    atas_nama: {
+      type: String,
+      required: false,
     },
     _refCreatedBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -71,7 +83,7 @@ transaksiSchema.virtual("createdBy", {
 });
 
 transaksiSchema.virtual("ProductDetail", {
-  ref: "Product",
+  ref: "Products",
   localField: "_ref_product",
   foreignField: "_id",
 });

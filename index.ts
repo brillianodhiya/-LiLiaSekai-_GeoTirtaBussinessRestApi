@@ -1,8 +1,10 @@
 import express from "express";
 import { json } from "body-parser";
 import dotenv from "dotenv";
+import cors from "cors";
+import winston from "winston";
+import expressWinston from "express-winston";
 import { MongoSetup } from "./config/mongo";
-
 import { todoRouter } from "./src/routes/todo";
 import { UserRouter } from "./src/routes/user";
 import { ProductRouter } from "./src/routes/product";
@@ -21,6 +23,23 @@ app.get("/", (req, res) => {
     message: "Wellcome to GeoTirta Service App",
   });
 });
+app.use(
+  expressWinston.logger({
+    transports: [new winston.transports.Console()],
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.json()
+    ),
+    meta: true,
+    msg: "HTTP {{req.method}} {{req.url}}",
+    expressFormat: true,
+    colorize: false,
+    ignoreRoute: (req, res) => {
+      return false;
+    },
+  })
+);
+app.use(cors());
 
 // imported routes
 app.use("/test", todoRouter);
