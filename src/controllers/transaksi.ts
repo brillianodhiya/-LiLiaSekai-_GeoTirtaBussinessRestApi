@@ -2,7 +2,9 @@ import { Request, Response } from "express";
 import { Transaksi } from "../models/transaksi";
 import mongoose from "mongoose";
 import moment from "moment";
-// import redis from "redis";
+import redis from "redis";
+
+const client = redis.createClient();
 
 function getReq(obj: any) {
   return obj;
@@ -25,6 +27,8 @@ const TransaksiService = {
     const page = parseInt(pagination.page) || 1;
     const size = parseInt(pagination.size) || 10;
 
+    const url = req.url || req.baseUrl;
+
     try {
       const sTransaksi = await Transaksi.find(data)
         .populate("createdBy", ["username", "email"])
@@ -33,6 +37,18 @@ const TransaksiService = {
         .limit(size);
 
       const total = await Transaksi.countDocuments();
+
+      client.setex(
+        url,
+        3600,
+        JSON.stringify({
+          status: 200,
+          page: page,
+          size: size,
+          total: total,
+          result: sTransaksi,
+        })
+      );
 
       return res.status(200).send({
         status: 200,
@@ -52,10 +68,21 @@ const TransaksiService = {
   GetProductAll: async (req: Request, res: Response) => {
     const data = req.query;
 
+    const url = req.url || req.baseUrl;
+
     try {
       const sTransaksi = await Transaksi.find(data)
         .populate("createdBy", ["username", "email"])
         .populate("ProductDetail", ["product_name", "price", "qty", "display"]);
+
+      client.setex(
+        url,
+        3600,
+        JSON.stringify({
+          status: 200,
+          result: sTransaksi,
+        })
+      );
 
       return res.status(200).send({
         status: 200,
