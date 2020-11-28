@@ -1,1 +1,1 @@
-web: node index.t
+web: node index.ts
