@@ -1,1 +1,1 @@
-web: node --experimental-modules index.ts
+web: npm start
