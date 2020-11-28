@@ -1,1 +1,1 @@
-web: node index.ts
+web: node --experimental-modules index.ts
