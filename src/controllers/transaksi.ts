@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Transaksi } from "../models/transaksi";
 import mongoose from "mongoose";
 import moment from "moment";
+// import redis from "redis";
 
 function getReq(obj: any) {
   return obj;
