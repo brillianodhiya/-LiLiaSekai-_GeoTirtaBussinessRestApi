@@ -36,13 +36,17 @@ const TransaksiService = {
 
       const total = await Transaksi.countDocuments();
 
-      myCache.set(url, {
-        status: 200,
-        page: page,
-        size: size,
-        total: total,
-        result: sTransaksi,
-      });
+      myCache.set(
+        url,
+        {
+          status: 200,
+          page: page,
+          size: size,
+          total: total,
+          result: sTransaksi,
+        },
+        3600
+      );
 
       return res.status(200).send({
         status: 200,
@@ -71,10 +75,14 @@ const TransaksiService = {
         .populate("createdBy", ["username", "email"])
         .populate("ProductDetail", ["product_name", "price", "qty", "display"]);
 
-      myCache.set(url, {
-        status: 200,
-        result: sTransaksi,
-      });
+      myCache.set(
+        url,
+        {
+          status: 200,
+          result: sTransaksi,
+        },
+        3600
+      );
 
       return res.status(200).send({
         status: 200,

@@ -1,17 +1,17 @@
 import express from "express";
 import { TransaksiService } from "../controllers/transaksi";
 import { CheckAuth } from "../middleware/auth";
-import { TransaksiCache } from "../middleware/nodeCacheMidleware";
+import { CheckCache, deleteCache } from "../middleware/nodeCacheMidleware";
 
 const router = express.Router();
 
-router.get("/all", TransaksiCache, CheckAuth, TransaksiService.GetProductAll);
-router.get(
-  "/:page/:size",
-  TransaksiCache,
+router.get("/all", CheckAuth, CheckCache, TransaksiService.GetProductAll);
+router.get("/:page/:size", CheckAuth, CheckCache, TransaksiService.GetProduct);
+router.post(
+  "/",
   CheckAuth,
-  TransaksiService.GetProduct
+  deleteCache("/transaksi"),
+  TransaksiService.doTransaction
 );
-router.post("/", CheckAuth, TransaksiService.doTransaction);
 
 export { router as TransaksiRouter };

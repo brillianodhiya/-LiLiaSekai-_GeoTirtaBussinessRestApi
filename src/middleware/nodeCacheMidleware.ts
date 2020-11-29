@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 import { myCache } from "../../config/nodeCache";
 
-const TransaksiCache = (req: Request, res: Response, next: Function) => {
+const CheckCache = (req: Request, res: Response, next: Function) => {
   const url = req.originalUrl;
 
   let value = myCache.get(url);
+
+  console.log(myCache.keys());
 
   if (value == undefined) {
     next();
@@ -13,4 +15,19 @@ const TransaksiCache = (req: Request, res: Response, next: Function) => {
   }
 };
 
-export { TransaksiCache, myCache };
+const deleteCache = (data: string) => {
+  return async (req: Request, res: Response, next: Function) => {
+    let keys = myCache.keys();
+    let deletedvalue = keys.filter((val) => val.includes(data) === true);
+
+    await myCache.del(deletedvalue);
+
+    // console.log(deletedvalue, "KEYS");
+
+    // console.log(data, "DATA");
+
+    next();
+  };
+};
+
+export { CheckCache, myCache, deleteCache };
