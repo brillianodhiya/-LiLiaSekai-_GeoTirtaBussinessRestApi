@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import moment from "moment";
 import { myCache } from "../../config/nodeCache";
 import { Products } from "../models/product";
+import { InvoiceNumber } from "invoice-number";
 
 function getReq(obj: any) {
   return obj;
@@ -30,6 +31,7 @@ const TransaksiService = {
 
     try {
       const sTransaksi = await Transaksi.find(data)
+        .sort("-createdAt")
         .populate("createdBy", ["username", "email"])
         .populate("ProductDetail", ["product_name", "price", "qty", "display"])
         .skip((page - 1) * size)
@@ -73,6 +75,7 @@ const TransaksiService = {
 
     try {
       const sTransaksi = await Transaksi.find(data)
+        .sort("-createdAt")
         .populate("createdBy", ["username", "email"])
         .populate("ProductDetail", ["product_name", "price", "qty", "display"]);
 
@@ -116,8 +119,10 @@ const TransaksiService = {
         dataY = "GT" + stringYearK + "0000";
       }
 
-      data.invoice_number = dataY;
+      // data.invoice_number = dataY;
       data._refCreatedBy = mongoose.Types.ObjectId(res.locals.decodeToken._id);
+
+      data.invoice_number = InvoiceNumber.next(dataY);
 
       const trans = Transaksi.build(data);
 
@@ -151,6 +156,98 @@ const TransaksiService = {
         status: 201,
         result: trans,
       });
+    } catch (error) {
+      return res.status(400).send({
+        status: 400,
+        message: error,
+      });
+    }
+  },
+  changeTransactionStatus: async (req: Request, res: Response) => {
+    const { invoice_number } = req.params;
+    const { status } = req.body;
+
+    if (!invoice_number) {
+      return res.status(422).send({
+        status: 422,
+        message: "Please send invoice number",
+      });
+    }
+
+    try {
+      let inv_data = await Transaksi.findOne({
+        invoice_number: invoice_number,
+      });
+
+      let { _ref_product } = JSON.parse(JSON.stringify(inv_data));
+
+      console.log(inv_data, "Inv Data");
+
+      if (inv_data?.status == status) {
+        return res.status(422).send({
+          status: 422,
+          message: "Can't change to same status",
+        });
+      }
+
+      if (status != "Sukses" && status != "Bon" && status != "Batal") {
+        return res.status(422).send({
+          status: 422,
+          message: "Status just can change in Sukses, Bon or Batal",
+        });
+      }
+
+      const product_data = await Products.findOne({
+        _id: _ref_product,
+      });
+
+      let qty;
+
+      if (product_data) {
+        if (inv_data?.status == "Bon" && status == "Sukses") {
+          qty = product_data?.qty;
+        }
+
+        if (inv_data?.status == "Sukses" && status == "Bon") {
+          qty = product_data?.qty;
+        }
+
+        if (inv_data?.status == "Batal" && status == "Bon") {
+          qty = product_data?.qty - inv_data.qty;
+        }
+
+        if (inv_data?.status == "Batal" && status == "Sukses") {
+          qty = product_data?.qty - inv_data.qty;
+        }
+
+        if (inv_data?.status == "Sukses" && status == "Batal") {
+          qty = product_data?.qty + inv_data.qty;
+        }
+      } else {
+        return res.status(404).send({
+          status: 404,
+          message: "Product not found",
+        });
+      }
+
+      const process = await Transaksi.findOneAndUpdate(
+        { invoice_number: invoice_number },
+        { status: status }
+      );
+      const productProcess = await Products.findOneAndUpdate(
+        { _id: _ref_product },
+        { qty: qty }
+      );
+
+      return res.status(200).send({
+        status: 200,
+        processOrder: process,
+        productProcess: productProcess,
+      });
+
+      // console.log(qty, "QTY");
+
+      // console.log(product_data, "product data");
     } catch (error) {
       return res.status(400).send({
         status: 400,

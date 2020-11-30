@@ -13,5 +13,11 @@ router.post(
   deleteCache("/transaksi"),
   TransaksiService.doTransaction
 );
+router.put(
+  "/status/:invoice_number",
+  CheckAuth,
+  deleteCache("/transaksi"),
+  TransaksiService.changeTransactionStatus
+);
 
 export { router as TransaksiRouter };

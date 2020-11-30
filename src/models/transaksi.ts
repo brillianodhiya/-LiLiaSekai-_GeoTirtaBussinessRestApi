@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { InvoiceNumber } from "invoice-number";
 
 interface ITransaksi {
   tanggal_transaksi: string;
@@ -33,9 +32,9 @@ const transaksiSchema = new mongoose.Schema(
     },
     invoice_number: {
       type: String,
-      set: (invoice_before: string) => {
-        return InvoiceNumber.next(invoice_before);
-      },
+      // set: (invoice_before: string) => {
+      //   return
+      // },
       unique: true,
     },
     _ref_product: {
