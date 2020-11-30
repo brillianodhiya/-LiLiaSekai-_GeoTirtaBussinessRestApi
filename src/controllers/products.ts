@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Products } from "../models/product";
 import mongoose from "mongoose";
+import { myCache } from "../../config/nodeCache";
 
 const ProductService = {
   addProduct: async (req: Request, res: Response) => {
@@ -11,6 +12,7 @@ const ProductService = {
     try {
       const product = Products.build(data);
       await product.save();
+
       return res.status(201).send({
         status: 201,
         result: product,
@@ -30,6 +32,8 @@ const ProductService = {
     const page = parseInt(pagination.page) || 1;
     const size = parseInt(pagination.size) || 10;
 
+    const url = req.originalUrl;
+
     try {
       const product = await Products.find(
         data.product_name
@@ -43,6 +47,18 @@ const ProductService = {
         .limit(size);
 
       const total = await Products.countDocuments();
+
+      myCache.set(
+        url,
+        {
+          status: 200,
+          page: page,
+          size: size,
+          total: total,
+          result: product,
+        },
+        3600
+      );
 
       return res.status(200).send({
         status: 200,
