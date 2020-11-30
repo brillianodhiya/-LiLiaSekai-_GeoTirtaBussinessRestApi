@@ -3,6 +3,7 @@ import { Transaksi } from "../models/transaksi";
 import mongoose from "mongoose";
 import moment from "moment";
 import { myCache } from "../../config/nodeCache";
+import { Products } from "../models/product";
 
 function getReq(obj: any) {
   return obj;
@@ -119,6 +120,30 @@ const TransaksiService = {
       data._refCreatedBy = mongoose.Types.ObjectId(res.locals.decodeToken._id);
 
       const trans = Transaksi.build(data);
+
+      const productService = await Products.findOne({ _id: data._ref_product });
+
+      if (productService) {
+        if (productService.qty <= 0) {
+          return res.status(400).send({
+            status: 400,
+            message: "This product qty is empty",
+          });
+        }
+      }
+
+      let qty;
+      if (data.qty && productService) {
+        if (data.status == "Sukses" || data.status == "Bon") {
+          qty = productService.qty - data.qty;
+        }
+
+        await Products.findOneAndUpdate(
+          { _id: data._ref_product },
+          { qty: qty },
+          { new: true }
+        );
+      }
 
       await trans.save();
 
