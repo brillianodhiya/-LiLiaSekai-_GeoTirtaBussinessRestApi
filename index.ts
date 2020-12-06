@@ -9,6 +9,7 @@ import { todoRouter } from "./src/routes/todo";
 import { UserRouter } from "./src/routes/user";
 import { ProductRouter } from "./src/routes/product";
 import { TransaksiRouter } from "./src/routes/transaksi";
+import { TransaksiV2R } from "./src/routes/transaksiv2";
 
 dotenv.config();
 
@@ -46,6 +47,7 @@ app.use("/test", todoRouter);
 app.use("/user", UserRouter);
 app.use("/product", ProductRouter);
 app.use("/transaksi", TransaksiRouter);
+app.use("/transaksi/v2", TransaksiV2R);
 
 MongoSetup(process.env.DB_URL);
 
